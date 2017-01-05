@@ -3,7 +3,7 @@ Minna Toorikka
 
 
 ```r
-##figures' output file changed manually, since knitr created a different folder structure by default
+##Change figures' output folder manually, because knitr created a different folder structure by default
 knitr::opts_chunk$set(fig.path='figure/PA1-')
 ```
 
@@ -16,16 +16,16 @@ activity <- read.csv("activity.csv", header=TRUE, sep=",", na.strings="NA")
 
 library(ggplot2)
 
-##pre-calcuate total steps per day (61 days) ignoring the NAs
+##pre-calcuate total steps per day (61 days), you can ignore the NAs  
+##(There are 8 full days without any data (not even zeros))
 
 totalDailySteps <- aggregate(activity$steps, by=list(date=activity$date), FUN=sum)
-colnames(totalDailySteps)[2] <- "total_steps"
-##notice that there are 8 full days without any data (not even zeros)
+colnames(totalDailySteps)[2] <- "total_steps" 
 
 
 ##pre-calculate average steps per 5-min interval (288 intervals)
 
-avgIntSteps <- aggregate(activity$steps, by=list(interval=activity$interval), FUN=mean, na.action=na.pass, na.rm=TRUE)         ##na.pass= not to delete NA rows, na.rm= mean() function to ignore them
+avgIntSteps <- aggregate(activity$steps, by=list(interval=activity$interval), FUN=mean, na.action=na.pass, na.rm=TRUE)         ##na.pass= not to delete NA rows, na.rm= mean() function to ignore them 
 colnames(avgIntSteps)[2] <- "avg_steps"
 ```
 
@@ -33,7 +33,7 @@ colnames(avgIntSteps)[2] <- "avg_steps"
 ##What is mean total number of steps taken per day?  
 
 
-##2. Make a histogram of the total number of steps taken each day (NAs included/unhandled)
+##2. Make a histogram of the total number of steps taken each day (NAs unhandled)
 
 ```r
   ##distribute steps in smaller bins for clarity
@@ -46,14 +46,14 @@ bins <- c(0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500)
 par(mfrow = c(1,1))
 hist(totalDailySteps$total_steps, 
      breaks=bins, xlim=c(0,22500), col="purple",
-     xlab="total daily steps", 
-     ylab="total steps frequency", 
+     xlab="Total daily steps", 
+     ylab="Total steps frequency", 
      main="Distribution of total steps taken daily \n(01.10.2012-30.11.2012)")
 ```
 
-![](figure/PA1-plot1-1.png)<!-- -->
+![PA1-plot1-1](figure/PA1-plot1-1.png)
 
-We can see from the histogram of this dataset that the Mean and probably also Median of the daily steps is somewhere between 10000 and 12500 steps/day (i.e. the middle bin). Let's check the values with the simple summary function (NAs not handled).
+We can see from the histogram of this dataset that the Mean and probably also Median of the daily steps is somewhere between 10000 and 12500 steps/day (i.e. the middle bin). Let's check the values with the simple summary function of the currrent data:
 
 ##3. Calculate the mean and median of the daily total steps
 
@@ -85,17 +85,17 @@ Plot the average number of steps taken, averaged across all days, to see the ste
 ```r
 plot(avgIntSteps$interval, avgIntSteps$avg_steps, type="l", 
      xlab="5-minutes intervals",
-     ylab="Average steps",
+     ylab="Average nbr of steps",
      main="Average steps taken per 5-minute intervals \n(averaged across all days)")
 ```
 
-![](figure/PA1-plot2-1.png)<!-- -->
+![PA1-plot2-1](figure/PA1-plot2-1.png)
 
-##5. Identify the 5-minute interval which has the maximum average step amount (taking possible ties into account, too).
+##5. Identify the 5-minute interval which has the maximum average step amount 
 
 
 ```r
-max <- avgIntSteps[which.max(avgIntSteps$avg_steps == max(avgIntSteps$avg_steps)), ]
+max <- avgIntSteps[which.max(avgIntSteps$avg_steps == max(avgIntSteps$avg_steps)), ] ##(taking possible ties into account, too).
 
 max
 ```
@@ -109,7 +109,7 @@ The interval with biggest amount of steps is 835.
 
 ## 6. Imputing missing values
 
-Calculate and record the total number of missing values in the dataset:
+Calculate and report the total number of missing values in the dataset:
 
 
 ```r
@@ -127,7 +127,7 @@ summary(activity)
 ##  NA's   :2304     (Other)   :15840
 ```
 
-There are 2304 missing values (NAs) in variable 'steps'.
+There are 2304 missing values (NAs) in the variable 'steps'.
 
 
 
@@ -177,12 +177,12 @@ colnames(imputedDailySteps)[2] <- "total_steps"
 ```r
 hist(imputedDailySteps$total_steps, 
      breaks=bins, xlim=c(0,22500), col="purple",
-     xlab="total daily steps", 
-     ylab="total steps density", 
+     xlab="Total daily steps", 
+     ylab="Total steps frequency", 
      main="Distribution of total steps taken daily \n(01.10.2012-30.11.2012)")
 ```
 
-![](figure/PA1-plot3-1.png)<!-- -->
+![PA1-plot3-1](figure/PA1-plot3-1.png)
 
 
 
@@ -205,7 +205,7 @@ summary(imputedDailySteps)
 ```
 
 After adding the avg step values for empty days/intervals, the steps frequency in the middle area has obviously grown, but otherwise the graph & steps' overall distribution looks quite similar. 
-Based on summary, there is no difference in the Mean value and a small difference in the Median (10765 vs 10766) after the NAs were replaced with avg/mean step values.   (Had we used some other method to fill up the gaps, the values might look different.)
+Based on summary, there is no difference in the Mean value and a small difference in the Median (10765 vs 10766) after the NAs were replaced with avg/mean step values.   (Had we used some other method to handle the NAs in the datasets, the values might look different.)
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -232,11 +232,11 @@ colnames(avgFullSteps)[3] <- "avg_steps"
 ggplot(avgFullSteps, aes(x=interval, y=avg_steps) ) + 
   geom_line(col="purple") + facet_wrap( ~ wday, ncol=1 ) + 
   theme(strip.background = element_rect(fill="thistle"))+
-  labs(list(x = "5-min intervals", y = "Average steps")) +
+  labs(list(x = "5-min intervals", y = "Average nbr of steps")) +
   ggtitle("Average steps taken per 5-minute intervals, \naveraged across weekdays and weekends") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![Avg steps per 5-min interval across weekdays and weekends](figure/PA1-plot4-1.png)
+![PA1-plot4-1](figure/PA1-plot4-1.png)
 
 Looks like on weekdays there is an activity burst in the morning (whey people wake up and get ready for work) but then people presumably sit more at their office desk. People also wake up earlier on weekdays (more steps in the early morning) and are less active in the evenings. On weekends, people are more active thoughout the day, also in the evening.
